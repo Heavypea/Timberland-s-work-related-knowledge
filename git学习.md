@@ -114,7 +114,7 @@ git init my_test
 
 修改后并添加到暂存区里面的文件
 
-![image-20240330152726195](C:\Users\hy\AppData\Roaming\Typora\typora-user-images\image-20240330152726195.png)
+image-20240330152726195
 
 ### Git添加，提交，删除文件
 
@@ -223,7 +223,7 @@ git commit -m "Remove example.txt from the repository"
 
 可以让我们忽略掉一些不应该被加入到仓库中的文件
 
-![image-20240330165052406](C:\Users\hy\AppData\Roaming\Typora\typora-user-images\image-20240330165052406.png)
+image-20240330165052406
 
 将文件名或  文件夹名加上/ 或通配符写入`.gitignore`文件中就可以将其忽略(可以使用vim)
 
@@ -235,12 +235,11 @@ git commit -m "Remove example.txt from the repository"
 
 #### `.gitignore`文件匹配规则
 
-![image-20240330170048526](C:\Users\hy\AppData\Roaming\Typora\typora-user-images\image-20240330170048526.png)
+image-20240330170048526
 
-![image-20240330170351812](C:\Users\hy\AppData\Roaming\Typora\typora-user-images\image-20240330170351812.png)
+image-20240330170351812
 
-![image-20240330170237708](C:\Users\hy\AppData\Roaming\Typora\typora-user-images\image-20240330170237708.png)
-
+image-20240330170237708
 ## Git远程仓库
 
 ### GitHub的使用与远程仓库操作
@@ -255,10 +254,9 @@ git commit -m "Remove example.txt from the repository"
 >
 > 若第一次生成,直接回车就行.若不是第一次,就要输入新的文件名,否则第一次生成的SSH密钥会被不可逆的覆盖
 
-![image-20240330181754497](C:\Users\hy\AppData\Roaming\Typora\typora-user-images\image-20240330181754497.png)
+image-20240330181754497
 
-![image-20240330182043852](C:\Users\hy\AppData\Roaming\Typora\typora-user-images\image-20240330182043852.png)
-
+image-20240330182043852
 这就是生成的密钥,第一个文件没有拓展名,是私钥文件,不可泄漏
 
 第二个文件有pub后缀,是公钥文件,打开文件(记事本)并复制其中内容到要使用的地方
@@ -267,7 +265,7 @@ git commit -m "Remove example.txt from the repository"
 
 不是第一次生成,还需要创建config文件并添加语句,让访问某个网站指定使用SSH下的某个密钥
 
-![image-20240330182508251](C:\Users\hy\AppData\Roaming\Typora\typora-user-images\image-20240330182508251.png)
+image-20240330182508251
 
 > [!NOTE]
 >
