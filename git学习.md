@@ -275,3 +275,23 @@ git commit -m "Remove example.txt from the repository"
 >
 > 注意本地仓库和远程仓库是独立的两个仓库，要同步需要使用pull和push，本地commit提交之后只会修改本地的
 
+### 关联本地仓库和远程仓库
+
+若本地已经有了仓库，要关联到远程仓库
+
+先使用在本地仓库中使用`git remote add origin xxx.git`，其中origin是创建远程仓库的一个别名，一般都是这个
+
+可以使用`git remote -v`查看我们当前本地仓库对应的远程仓库的别名和地址
+
+再使用`git branch -M main`指定分支的名称为main
+
+最后使用`git push -u origin main:main`将本地的main分支和远程origin仓库的main分支关联起来，因为名称相同，所以可以省略掉`:main`。
+
+> [!IMPORTANT]
+>
+> (　o=^•ェ•)o　┏━┓
+>
+> `origin`是远程仓库的默认名称，第一个`main`代表本地分支名，第二个`main`代表远程分支名。`-u`参数会将本地分支设置为追踪远程分支，这意味着在未来的`git pull`或`git push`操作中，你可以不必指定远程仓库名或分支名
+
+
+
