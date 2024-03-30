@@ -312,7 +312,8 @@ git commit -m "Remove example.txt from the repository"
 
 在命令行中进入目录，并输入`code .`就可以直接用vscode打开当前目录。但这个要进行配置，打开命令面板后输入path。然后点击图中命令即可
 
-![image-20240330195617717](C:\Users\hy\AppData\Roaming\Typora\typora-user-images\image-20240330195617717.png)
+![image](https://github.com/Heavypea/Timberland-s-work-related-knowledge/assets/90777267/508f8a4b-b32f-4a9e-91b5-b8c0de9c36e2)
+
 
 
 
