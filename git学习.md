@@ -295,3 +295,15 @@ git commit -m "Remove example.txt from the repository"
 
 
 
+当远程仓库更新后，使用`git pull origin main`拉取更新后的文件到本地仓库。这里的`origin`是远程仓库的默认名称，第一个`main`代表远程分支名。在`git pull`命令中，通常只需要指定远程分支名，Git会自动将其合并到当前检出的本地分支。
+
+> [!NOTE]
+>
+> (ノ｀Д)ノ
+>
+> 在执行git pull之后，Git会自动执行一次合并操作，若远程仓库重点修改内容和本地仓库中的修改内容没有冲突时，合并成功。反之失败
+>
+> 使用git fetch就不会自动执行合并，需要我们自己手动合并
+
+
+
