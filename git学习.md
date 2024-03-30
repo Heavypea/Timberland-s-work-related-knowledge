@@ -304,5 +304,19 @@ git commit -m "Remove example.txt from the repository"
 >
 > 使用git fetch就不会自动执行合并，需要我们自己手动合并
 
+#### 本地复制的图片无法push到远程仓库中
 
+需要在远程仓库中加入图片，真麻烦。
+
+### 使用vscode
+
+在命令行中进入目录，并输入`code .`就可以直接用vscode打开当前目录。但这个要进行配置，打开命令面板后输入path。然后点击图中命令即可
+
+![image-20240330195617717](C:\Users\hy\AppData\Roaming\Typora\typora-user-images\image-20240330195617717.png)
+
+
+
+
+
+## 分支
 
