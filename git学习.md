@@ -321,3 +321,32 @@ git commit -m "Remove example.txt from the repository"
 
 ## 分支
 
+仓库中的文件名和提交记录要以最简单的方式命名
+
+使用分支名加冒号加序号的方式编写提交记录
+
+
+
+使用`git branch`查看分支情况，命令行中前面带有*就是目前所处在的分支
+
+使用`git branch xxx`创建一个名为xxx的分支
+
+> [!CAUTION]
+>
+> ╰(￣ω￣ｏ)
+> 使用`git branch xxx`只是创建分支，并没有切换到xxx分支哦
+
+使用`git checkout xxx`切换到xxx分支。checkout还可以用来恢复文件或者目录到之前的某一个状态，若文件名/目录名和分支名相同时，默认执行切换xxx分支的效果
+
+所以新的语句`git switch xxx`专门用来切换分支
+
+**分支就是用来在不影响main分支和其他人的情况下进行开发和测试**
+
+不同分支上的修改需要进行合并，使用`git merge xxx`将xxx分支合并到当前分支中。合并后会自动进行提交
+
+> [!WARNING]
+>
+> o(><；)oo
+> 千万别merge错了，xxx是要被合并的，不能写main！要先切换到main分支再合并
+
+在命令行中使用`git log --graph --oneline --decorate --all`来查看分支图
