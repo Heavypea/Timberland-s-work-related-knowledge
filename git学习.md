@@ -314,7 +314,7 @@ git commit -m "Remove example.txt from the repository"
 
 ![image](https://github.com/Heavypea/Timberland-s-work-related-knowledge/assets/90777267/508f8a4b-b32f-4a9e-91b5-b8c0de9c36e2)
 
-
+然后再源代码管理那里使用图形化操作，可参考【【GeekHour】一小时Git教程】 https://www.bilibili.com/video/BV1HM411377j/?p=15&share_source=copy_web&vd_source=ea2eaf8cb220ddebb93297f285dc38f6
 
 
 
