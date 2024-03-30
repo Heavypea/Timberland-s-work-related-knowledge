@@ -245,6 +245,8 @@ git commit -m "Remove example.txt from the repository"
 
 ### GitHub的使用与远程仓库操作
 
+使用`git clone xxx.git`将远程仓库部署到本地
+
 #### 配置SSH密钥
 
 使用`ssh-keygen -t rsa -b 4096`生成SSH密钥(-t代表协议类型,-b代表大小)
@@ -266,3 +268,10 @@ git commit -m "Remove example.txt from the repository"
 不是第一次生成,还需要创建config文件并添加语句,让访问某个网站指定使用SSH下的某个密钥
 
 ![image-20240330182508251](C:\Users\hy\AppData\Roaming\Typora\typora-user-images\image-20240330182508251.png)
+
+> [!NOTE]
+>
+> o(￣┰￣*)ゞ
+>
+> 注意本地仓库和远程仓库是独立的两个仓库，要同步需要使用pull和push，本地commit提交之后只会修改本地的
+
