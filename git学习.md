@@ -114,7 +114,7 @@ git init my_test
 
 修改后并添加到暂存区里面的文件
 
-image-20240330152726195
+![image](https://github.com/Heavypea/Timberland-s-work-related-knowledge/assets/90777267/1135d5b7-52b8-4573-8642-e5dce9b7150a)
 
 ### Git添加，提交，删除文件
 
@@ -223,7 +223,7 @@ git commit -m "Remove example.txt from the repository"
 
 可以让我们忽略掉一些不应该被加入到仓库中的文件
 
-image-20240330165052406
+![image](https://github.com/Heavypea/Timberland-s-work-related-knowledge/assets/90777267/40a77a45-c510-4ee3-9b74-f58f57fb99c7)
 
 将文件名或  文件夹名加上/ 或通配符写入`.gitignore`文件中就可以将其忽略(可以使用vim)
 
@@ -235,11 +235,12 @@ image-20240330165052406
 
 #### `.gitignore`文件匹配规则
 
-image-20240330170048526
+![image](https://github.com/Heavypea/Timberland-s-work-related-knowledge/assets/90777267/f448eca4-728c-42db-bd2b-de576272c67f)
 
-image-20240330170351812
+![image](https://github.com/Heavypea/Timberland-s-work-related-knowledge/assets/90777267/6852607e-8ae5-48d6-be03-b84d16f619bf)
 
-image-20240330170237708
+![image](https://github.com/Heavypea/Timberland-s-work-related-knowledge/assets/90777267/6bea9d93-c791-46de-82ce-1784d0557561)
+
 ## Git远程仓库
 
 ### GitHub的使用与远程仓库操作
@@ -254,9 +255,9 @@ image-20240330170237708
 >
 > 若第一次生成,直接回车就行.若不是第一次,就要输入新的文件名,否则第一次生成的SSH密钥会被不可逆的覆盖
 
-image-20240330181754497
+![image](https://github.com/Heavypea/Timberland-s-work-related-knowledge/assets/90777267/712eff1d-a9dd-4324-a652-797071a00345)
 
-image-20240330182043852
+![image](https://github.com/Heavypea/Timberland-s-work-related-knowledge/assets/90777267/e30ce24f-c3ae-4463-b7a2-9ab99b9d4ba1)
 这就是生成的密钥,第一个文件没有拓展名,是私钥文件,不可泄漏
 
 第二个文件有pub后缀,是公钥文件,打开文件(记事本)并复制其中内容到要使用的地方
@@ -265,7 +266,7 @@ image-20240330182043852
 
 不是第一次生成,还需要创建config文件并添加语句,让访问某个网站指定使用SSH下的某个密钥
 
-image-20240330182508251
+![image](https://github.com/Heavypea/Timberland-s-work-related-knowledge/assets/90777267/59973b73-5e2a-4a82-892d-e9b463c5829e)
 
 > [!NOTE]
 >
