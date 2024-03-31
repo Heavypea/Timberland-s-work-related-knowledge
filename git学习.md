@@ -392,7 +392,7 @@ git commit -am "Remove example.txt from the repository"
 
 在Git中，每个分支都有一个HEAD指针，指向当前分支的最新提交记录。在执行rebase操作时，Git会先找到当前分支和目标分支的共同祖先，再把**当前分支上**上从共同祖先到最新提交记录的所有提交全部都移动到xxx分支的最新提交后面
 
-![image-20240331140355680](C:\Users\hy\AppData\Roaming\Typora\typora-user-images\image-20240331140355680.png)
+![image](https://github.com/Heavypea/Timberland-s-work-related-knowledge/assets/90777267/1b057abd-4c11-4ae5-a13c-af2a20de71a0)
 
 如果在dev分支上执行`git rebase main`，就把dev分支和main分支共同祖先后的dev提交记录，移动到main分支的最新提交记录后面。反之同理。
 
