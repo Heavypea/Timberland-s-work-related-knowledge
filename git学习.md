@@ -159,7 +159,11 @@ git commit -m "Remove example.txt from the repository"
 - `-m`：这是一个选项，用于后面紧接着提供一个字符串作为提交信息。如果不使用 `-m` 选项，Git 会打开一个文本编辑器，让你输入提交信息。
 - `"Remove example.txt from the repository"`：这是你为这次提交提供的具体信息。这条信息会保存在提交历史中，用于描述这次提交做了什么。
 
+```
+git commit -am "Remove example.txt from the repository"
+```
 
+- 加入-a可以完成暂存和提交两步操作
 
 `git log`用于查看提交记录，如id，作者，邮箱，注释
 
@@ -325,7 +329,7 @@ git commit -m "Remove example.txt from the repository"
 
 使用分支名加冒号加序号的方式编写提交记录
 
-
+### 分支创建
 
 使用`git branch`查看分支情况，命令行中前面带有*就是目前所处在的分支
 
@@ -342,6 +346,8 @@ git commit -m "Remove example.txt from the repository"
 
 **分支就是用来在不影响main分支和其他人的情况下进行开发和测试**
 
+### 分支合并
+
 不同分支上的修改需要进行合并，使用`git merge xxx`将xxx分支合并到当前分支中。合并后会自动进行提交
 
 > [!WARNING]
@@ -350,3 +356,23 @@ git commit -m "Remove example.txt from the repository"
 > 千万别merge错了，xxx是要被合并的，不能写main！要先切换到main分支再合并
 
 在命令行中使用`git log --graph --oneline --decorate --all`来查看分支图
+
+
+
+合并后，被合并的分支还是存在的，可以使用`git branch -d xxx`来删除分支，-d表示删除已经完成合并的分支，未合并会报错，比较安全。要删除未合并的要改成-D
+
+### 分支冲突解决
+
+若两个分支修改的部分没有冲突的话，合并就没问题。若有冲突就需要手动解决冲突
+
+冲突产生时，使用`git status`可以查看冲突文件的列表，也可以使用`git diff`查看冲突的具体内容
+
+然后人工修改解决冲突，提交后会自动合并
+
+
+
+若想要不合并这个冲突，可以使用`git merge --abort`终止合并
+
+
+
+### 回退
