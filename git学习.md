@@ -340,13 +340,24 @@ git commit -am "Remove example.txt from the repository"
 > ╰(￣ω￣ｏ)
 > 使用`git branch xxx`只是创建分支，并没有切换到xxx分支哦
 
+
+
+
+
 使用`git checkout xxx`切换到xxx分支。checkout还可以用来恢复文件或者目录到之前的某一个状态，若文件名/目录名和分支名相同时，默认执行切换xxx分支的效果
+
+- `git checkout xxx` 用于切换到已存在的分支。如果分支已经存在，你可以使用这个命令来切换到那个分支。
+- `git checkout -b xxx` 不仅会创建一个新的分支，还会立即切换到这个新创建的分支。这个命令相当于先执行 `git branch xxx` 创建新分支，然后执行 `git checkout xxx` 切换到新分支。
+
+
+
+
 
 所以新的语句`git switch xxx`专门用来切换分支
 
 **分支就是用来在不影响main分支和其他人的情况下进行开发和测试**
 
-### 分支合并
+### 分支合并和删除
 
 不同分支上的修改需要进行合并，使用`git merge xxx`将xxx分支合并到当前分支中。合并后会自动进行提交
 
@@ -375,4 +386,46 @@ git commit -am "Remove example.txt from the repository"
 
 
 
-### 回退
+### 回退和rebase
+
+`git rebase xxx`
+
+在Git中，每个分支都有一个HEAD指针，指向当前分支的最新提交记录。在执行rebase操作时，Git会先找到当前分支和目标分支的共同祖先，再把**当前分支上**上从共同祖先到最新提交记录的所有提交全部都移动到xxx分支的最新提交后面
+
+![image-20240331140355680](C:\Users\hy\AppData\Roaming\Typora\typora-user-images\image-20240331140355680.png)
+
+如果在dev分支上执行`git rebase main`，就把dev分支和main分支共同祖先后的dev提交记录，移动到main分支的最新提交记录后面。反之同理。
+
+> [!TIP]
+>
+> o(*￣▽￣*)o
+> 可以使用alias命令给很长的命令起个短的别名
+> 如`alias graph="git log --graph --oneline --decorate --all"`
+>
+> 然后直接输入graph就能执行这个长命令了
+
+### merge和rebase的使用区别
+
+merge的优点是不会破坏原分支的提交记录，方便回溯和查看
+
+缺点是会产生额外的提交记录和两条分支线的合并，会使得提交记录变得复杂
+
+大多数情况使用merge
+
+
+
+rebase的有点是不需要新增额外的提交记录到目标分支，可以形成线性的提交历史记录，非常直观和干净
+
+缺点是会改变提交历史，改变当前分支branchout的节点，要避免在一个共享分支上进行rebase操作
+
+
+
+### Git分支管理和工作流模型
+
+GitFlow模型
+
+GitHub Flow模型
+
+【【GeekHour】一小时Git教程】 https://www.bilibili.com/video/BV1HM411377j/?p=19&share_source=copy_web&vd_source=ea2eaf8cb220ddebb93297f285dc38f6
+
+看视频更有效
