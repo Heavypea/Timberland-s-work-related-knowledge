@@ -64,7 +64,7 @@ git init后可以指定目录的名称，若指定了，就在当前目录下面
 
 eg：
 
-```
+```bash
 mkdir test
 cd test
 git init my_test
@@ -151,7 +151,7 @@ git init my_test
 
 `git commit`只会提交在暂存区中的文件
 
-```
+```bash
 git commit -m "Remove example.txt from the repository"
 ```
 
