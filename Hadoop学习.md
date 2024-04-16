@@ -141,7 +141,7 @@ path表示待创建的目录
 
 比如：
 
-```
+``` 
 hdfs dfs -mkdir -p /xxx/yyy
 ```
 
@@ -528,54 +528,365 @@ Hive的Driver驱动程序，包括语法解释器，计划编译器，优化器�
 
 Hive时单机工具，只需要部署在一台服务器
 
-## Hive语句
+## Hive数据库操作语句
 
 执行`bin/hive`进入Hive shell环境
 
 ### 创建数据库：
 
-```
+```hive
 create database if not exits 数据库名 location '/myhive2';
 ```
 
 location用于指定hdfs存储位置
 
-### 进入数据库：
+### 选择数据库：
 
-```
-use 数据库名;
-```
+`use 数据库名;`
 
 ### 查看数据库详细信息：
 
-```
-desc database 数据库名;
-```
+`desc database 数据库名;`
 
 ### 删除数据库
 
-```
-drop database 数据库名;//只能删除空数据库
-drop database 数据库名 cascade;//强制删除数据库和里面的表
-```
+`drop database 数据库名;`只能删除空数据库
+`drop database 数据库名 cascade;`强制删除数据库和里面的表
 
 
 
-### 创建表：
+### 创建表（简单）：
 
-```
-create table test(id int,name string,gender string);
+```hive
+create table test(
+	id int,
+	name string,
+	gender string
+);
 ```
 
 ### 插入数据：
 
-```
+```hive
 insert into test values(1,'xxx','male'),(...);
 ```
 
 ### 查询数据：
 
-```
+```hive
 select gender,count(*) as cnt from test group by gender;
+```
+
+## Hive数据类型
+
+- boolean
+- tinyint：1字节的有符号整数，-128~127
+- smallint：2字节的有符号整数，-32768~32767
+- **int**：4字节的有符号整数
+- bigint：8字节的有符号整数
+- float：4字节单精度浮点数
+- double：8字节双精度浮点数
+- deicimal：任意精度的带符号小数
+- **string**：字符串，不定长
+- **varchar**：同string
+- char：字符串，定长
+- binary：字节数组
+- **timestamp**：时间戳，毫秒精确度
+- **date**：日期
+
+复合类型
+
+- array：有序的同类型的集合
+- map：key-value。key必须为普通类型，value可以是任何类型
+- struct：字段类型，类型可以不同
+- union：在有限取值范围内的一个值
+
+## Hive表操作语句
+
+数据表名可以是`数据库名.表名`，指定在那个数据库中对表进行操作
+
+### 创建表（完整）：
+
+```hive
+create [external] table [if not exits] 数据表名 [(col_name data_type [comment col_comment],...)] [comment tanle_comment] [partitioned by (col_name data_type [comment col_comment],...)] [clustered by (col_name,col_name,...) [sorted by (col_name [asc/desc],...)] into num_buckets buckets] [row format row_format] [stored as file_format] [location  hdfs_path];
+```
+
+### 删除表：
+
+`drop table 数据表名;`
+
+### 清空表：
+
+`truncate table 数据表名;`
+
+只能清空内部表
+
+### 表重命名：
+
+`alter table 旧数据表名 rename to 新数据表名;`
+
+### 修改表属性值：
+
+`alter table 数据表名 set tblproperties (表属性=表属性值);`
+
+比如：
+
+```hive
+alter table table_name set tblproperties ('comment'=new_comment);//修改表注释
+
+alter table 表名 set tblproperties ('EXTERNAL'='TRUE');
+```
+
+### 添加表的分区：
+
+`alter table 数据表名 add partition (分区列=xxx);`
+
+### 修改表的分区：
+
+`alter table 数据表名 partition (分区列=xxx) rename to partition (列=yyy);`
+
+实际上是修改元数据记录，HDFS的实体文件夹实不会改名的，但元数据记录中是改名了
+
+### 删除表的分区：
+
+`alter table 数据表名 drop partition (分区列=xxx);`
+
+实际上知识删除元数据记录，数据本身还在
+
+### 添加列：
+
+`alter table 数据表名 add columns (列 列数据类型,...);`
+
+### 修改列名：
+
+`alter table 数据表名 change 旧列名 新列名 旧列数据类型;`
+
+## Hive中表分类
+
+### 内部表
+
+未被关键字external关键字修饰的表，即普通表，也叫管理表。
+
+内部表的数据存储位置由hive.metastore.warehouse.dir参数决定
+
+删除内部表会直接删除元数据（表的信息）和存储数据，因此内部表不适合和其他工具共享数据
+
+### 外部表
+
+`create external table 数据表名 ... location ...;`
+
+也叫关联表，表数据可以在任何位置，通过关键字location指定。
+
+这个表在理念上并不是Hive内部管理的，可以随意临时连接到外部数据上，删除外部表时，仅仅删除元数据，不删除存储数据
+
+- 可以先有表，然后把数据移动到表指定的location中
+  1. 先检查：hadoop fs -ls /tmp，确认不存在/tmp/test_ext1目录
+  2. 创建外部表并将location指定为/tmp/test_ext1
+  3. select * from test_ext1，无数据
+  4. 上传数据 hadoop fs -put test_external.txt /tmp/test_ext1/
+  5. select * from test_ext1，可以看见数据
+- 也可以先有数据，然后创建表通过location指向数据
+  1. 先创建/tmp/test_ext2目录，hadoop fs -mkdir /tmp/test_ext2
+  2. 上传数据hadoop fs -put test_external.txt /tmp/test_ext2/ 
+  3. 创建外部库并将location指定为/tmp/test_ext2
+  4. select * from test_ext2
+
+### 分区表
+
+将大文件分成一个个小文件。分区是将表拆分到不同的**子文件夹**中进行存储
+
+`create table 表名(...) partitioned by (分区列 列类型,...) row format delimited fields terminated by '\t';`
+
+partitioned by指的是通过哪些列进行分区
+
+比如：
+
+```hive
+create table score(s_id string,c_id string s_score int) partitioned by (year string,month string,day string) row format delimited fields terminated by '\t';
+```
+
+
+
+加载数据到分区表中
+
+`LOAD DATA [LOCAL] INPATH 'filepath' [OVERWRITE] INTO TABLE score2 partition(year='2020',month='06',day='01');`
+
+### 分桶表
+
+将表拆分到**固定数量**的不同**文件**中进行存储
+
+开启分桶的自动优化（自动匹配reduce task数量和桶数量一致）：
+
+`set hive.enforce.bucketing=true;`
+
+创建分桶表：
+
+ `create table hive.course (c_id string,c_name string,t_id string) clustered by(c_id) into 3 buckets row format delimited fields terminated by '\t';`
+
+clustered by表明按一个列进行分桶
+
+
+
+加载数据到分桶表中：
+
+1. 创建一个临时表，通过load的方法加载数据进入这个表
+2. 然后通过insert select从临时表向桶表插入数据
+
+因为需要将文件划分为桶的数量的份数，划分是基于分桶列的值进行hash取模来决定,基于结果放入对应序号的桶文件中。因为load data不会触发MapReduce，也就无法执行hash算法，所以无法使用load方法
+
+比如：
+
+```hive
+create table course_common(c_id string,c_name string,t_id string) row format delimited fields terminated by '\t';
+
+load data local inpath '/.../course.txt' into table course_common;
+
+insert overwrite table course select * from course_common cluster by(c_id);
+```
+
+
+
+基于分桶列，分桶表可以过滤出单个值，可以优化双表join，可以自动分组
+
+## 数据分隔符
+
+Hive中的数据分隔符是`\001`，是ASCII码，键盘打不出来
+
+有些文本编辑器显示是`SOH`
+
+也可以在创建表的时候自己指定分隔符：
+
+```hive
+create table if not exists stu2(id int,name string) row format delimited fields terminated by '\t';
+```
+
+表示以\t分隔
+
+`row format delimited fields terminated by '\t'`
+
+## Hive查看表信息
+
+`desc formatted 表名;`
+
+## 内外表转换
+
+### 内部表转外部表:
+
+ `alter table 表名 set tblproperties('EXTERNAL'='TRUE');`
+
+### 外部表转内部表:
+
+ `alter table 表名 set tblproperties('EXTERNAL'='FALSE');`
+
+> [!CAUTION]
+>
+> (●ˇ∀ˇ●)
+>
+> 'EXTERNAL'='FALSE'和'EXTERNAL'='TRUE'是固定写法，区分大小写
+
+## Hive数据导入
+
+### LOAD
+
+使用LOAD语法，从外部将数据加载到Hive内，不会走MapReduce，小文件较快
+
+`LOAD DATA [LOCAL] INPATH 'filepath' [OVERWRITE] INTO TABLE 表名;`
+
+local表示数据是否在本地
+
+- 当数据不在HDFS时，使用local，需使用file://协议头只当路径
+- 当数据在HDFS的时候，不使用local，可以使用HDFS://协议头指定路径
+
+filepath是数据路径
+
+OVERWRITE是覆盖已存在数据，不写就不覆盖
+
+> [!CAUTION]
+>
+> ˋ( ° ▽、° ) 
+>
+> 基于HDFS进行load加载数据，源数据文件会消失，本质是被移动到表所在的目录中
+
+### INSERT SELECT
+
+使用SQL语句，从其他表中加载数据
+
+`INSERT [OVERWRITE/INTO] TABLE 表名 [PARTITION (partcol1=val1,partcol2=val2 ...) [IF NOT EXISTS]] select statement1 FROM from_statement;`
+
+被SELECT查询的表可以是内部表或外部表
+
+比如：
+
+``` hive
+INSERT INTO TABLE tbl1 SELECT * FROM tbl2;
+INSERT OVERWRITE TABLE tbl1 SELECT * FROM tbl2;
+```
+
+## Hive数据导出
+
+### INSERT
+
+`insert overwrite [local] directory 'path' select_statement from from_statement;`
+
+local将查询的结果导出到本地，不写local就是导出到HDFS上
+
+比如：
+
+```hive
+insert overwrite local directory '/home/hadoop/ex1' select * from test_load;
+```
+
+可以加上`row format delimited fields terminated by '\t'`指定分隔符，加在'path'之后
+
+### Hive shell
+
+`bin/hive -e "select * from myhive.test_load;" > /home/hadoop/ex4/ex4.txt`
+
+`bin/hive -f export.sql > /home/hadoop/ex4/ex4.txt`
+
+-e是指定sql，直接执行sql语句，将结果通过Linux的重定向符号写入指定文件中
+
+-f是指定脚本
+
+\>是重定向符
+
+
+
+export.sql是一个sql语句文件，里面存了select * from myhive.test_load;
+
+## array类型的操作
+
+一个列记录多个元素，用[]可以取任意位置的元素，所引从0开始
+
+建表：
+
+```hive
+create table myhive.test_array(name string,work_locations array<string>) row format delimited fields terminated by '\t' collection items terminated by ',';
+```
+
+collection items terminated by ','表示array中的元素用逗号隔开
+
+
+
+取：
+
+```hive
+select name,work_locations[0] from myhive.test_array;
+```
+
+查询array类型的元素个数：
+
+size(数组)
+
+```hive
+select name,size(work_locations) from myhive.test_array;
+```
+
+通过array某个元素过滤：
+
+array_contains(数组,数据)可以查看指定数据是否在数组中存在
+
+```hive
+select * from myhive.test_array where array_contains(work_locations,'xxx');
 ```
 
