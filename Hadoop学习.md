@@ -493,3 +493,89 @@ NodeManager预先占用一部分资源，这部分资源叫做容器，然后将
 ## 运行MapReduce程序代码
 
 `hadoop jar 程序文件路径 java类名 [程序参数]`
+
+## Hive的功能
+
+是一款分布式SQL计算的工具，将SQL语句翻译成MapReduce程序运行
+
+## Hive架构
+
+### 元数据管理
+
+- 数据位置
+- 数据结构
+- 数据描述
+
+通常存储在关系型数据库中，Hive中的元数据包括表的名字，列，分区和属性，数据所在目录等
+
+Hive的数据存储在HDFS的/user/hive/warehouse中
+
+
+
+### SQL解析器
+
+- SQL分析
+- SQL到MapReduce程序的转换
+- 提交MapReduce程序运行并收集执行结果
+
+Hive的Driver驱动程序，包括语法解释器，计划编译器，优化器，执行器。
+
+### 用户接口
+
+包括CLI,JDBC/ODBC,WebGUI等接口与Hive进行交互
+
+## Hive的部署
+
+Hive时单机工具，只需要部署在一台服务器
+
+## Hive语句
+
+执行`bin/hive`进入Hive shell环境
+
+### 创建数据库：
+
+```
+create database if not exits 数据库名 location '/myhive2';
+```
+
+location用于指定hdfs存储位置
+
+### 进入数据库：
+
+```
+use 数据库名;
+```
+
+### 查看数据库详细信息：
+
+```
+desc database 数据库名;
+```
+
+### 删除数据库
+
+```
+drop database 数据库名;//只能删除空数据库
+drop database 数据库名 cascade;//强制删除数据库和里面的表
+```
+
+
+
+### 创建表：
+
+```
+create table test(id int,name string,gender string);
+```
+
+### 插入数据：
+
+```
+insert into test values(1,'xxx','male'),(...);
+```
+
+### 查询数据：
+
+```
+select gender,count(*) as cnt from test group by gender;
+```
+
