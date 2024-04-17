@@ -764,7 +764,7 @@ create table if not exists stu2(id int,name string) row format delimited fields 
 
 `row format delimited fields terminated by '\t'`
 
-## Hive查看表信息
+## Hive查看表信息（元数据）
 
 `desc formatted 表名;`
 
@@ -874,6 +874,8 @@ collection items terminated by ','表示array中的元素用逗号隔开
 select name,work_locations[0] from myhive.test_array;
 ```
 
+
+
 查询array类型的元素个数：
 
 size(数组)
@@ -882,6 +884,8 @@ size(数组)
 select name,size(work_locations) from myhive.test_array;
 ```
 
+
+
 通过array某个元素过滤：
 
 array_contains(数组,数据)可以查看指定数据是否在数组中存在
@@ -889,4 +893,471 @@ array_contains(数组,数据)可以查看指定数据是否在数组中存在
 ```hive
 select * from myhive.test_array where array_contains(work_locations,'xxx');
 ```
+
+## map类型的操作
+
+map字段之间的分隔符是`#`
+
+`collection items terminated by '#'`
+
+k-v之间的分隔符是`:`
+
+`map keys terminated bt ':'`
+
+建表：
+
+```hive
+create table myhive.test_map(id int,name string,members map<string,string>,age int) row format delimited fields terminated by ',' collection items terminated by '#' map keys terminated bt ':';
+```
+
+
+
+通过map名['key']取对应的值
+
+```hive
+select id,name,members['father'] from myhive.test_map;
+```
+
+
+
+取出map的全部key,返回类型是array
+
+map_keys(map名)
+
+```hive
+select map_keys(members) from myhive.test_map;
+```
+
+
+
+取出map的全部value,返回类型是array
+
+map_values(map名)
+
+```hive
+select map_values(members) from myhive.test_map;
+```
+
+
+
+查看map元素的个数
+
+size(map名)
+
+```hive
+select size(members) from myhive.test_map;
+```
+
+
+
+查看指定数据是否在map中
+
+array_contains(数组,数据)
+
+数组可以是map_values(map名)，map_keys(map名)
+
+```hive
+select * from myhive.test_map where array_contains(map_keys(members),'sister');
+```
+
+## struct类型的操作
+
+struct可以在一个列中存入多个子列，每个子列允许设置类型和名称
+
+字段之间的分隔符是`#`
+
+row format delimited fields terminated by '#'
+
+struct中子列之间的分隔符是`:`
+
+collection items terminated by ':'
+
+建表：
+
+```hive
+create table myhive.test_struct(id string,info struct<name:string,age:int>) row format delimited fields terminated by '#' collection items terminated by ':';
+```
+
+info是父列，name和age是子列
+
+
+
+取数据：
+
+父列名.子列名
+
+```hive
+select id,info.name,info.age from myhive.test_struct;
+```
+
+
+
+## 查询语句（完整）
+
+```hive
+select [all/distinct] xxx,xxx,... 
+from 表名
+[where where条件]
+[group by 列名]
+[having where条件]
+[order by 列名]
+[cluster by 列名/distribute by 列名/sort by 列名]
+[limit 数字]
+```
+
+
+
+## RLIKE正则匹配
+
+`.`匹配任意单个字符，除换行符外
+
+比如jav.会匹配java
+
+
+
+`[]`匹配[]中的任意一个字符
+
+比如j[abcde]va会匹配java
+
+
+
+`-`用于[]内表示字符范围
+
+比如j[a-e]va会匹配java
+
+
+
+`^`在[]的开头，匹配除[]内的字符之外的任意一个字符
+
+比如java会匹配j[\^b-e]va
+
+
+
+`|`或
+
+比如x|y会匹配x或y
+
+
+
+`\`降下一个字符标记为特殊字符，文本。反向引用或八进制转义符
+
+\\(会匹配(
+
+
+
+`$`匹配输出字符串结尾的位置，若设置了RegExp对象的Multiline属性，$还会与'\n'或'\r'之前的位置匹配
+
+;$会匹配位于一行和外围的;
+
+
+
+`*`零次或多次匹配前面的字符
+
+zo*会匹配zoo或z
+
+
+
+`+`一次或多次匹配前面的字符
+
+zo+会匹配zo或zoo
+
+
+
+`?`零次或一次匹配前面的字符
+
+zo?会匹配z或zo
+
+
+
+`x{n}`n为非负整数，表示正好匹配n次
+
+o{2}会匹配food
+
+
+
+`x{n,}`n为非负整数，表示至少匹配n次
+
+o{2,}会匹配foooood
+
+
+
+`x{n,m}`n和m为非负整数，其中n<=m,表示匹配n到m次
+
+o{2,5}会匹配fooood
+
+
+
+`\p{P}`匹配一个标点
+
+j\p{P}a会匹配j?a
+
+
+
+`\b`匹配一个字边界
+
+va\b匹配java中的va
+
+
+
+`\B`非字边界匹配
+
+va\B匹配javar中的va
+
+
+
+`\d`匹配数字字符
+
+1[\\d]会匹配13
+
+
+
+`\D`非数字字符匹配
+
+[\\D]ava会匹配java
+
+
+
+`\w`匹配单词字符
+
+[\\w]ava会匹配java
+
+
+
+`\W`匹配非单词字符
+
+[\\W]ava会匹配$ava
+
+
+
+`\s`匹配空白字符
+
+jav\\sa会匹配jav a
+
+
+
+`\S`匹配非空白字符
+
+j[\\S]va匹配java
+
+
+
+`\f`匹配换页符，等效于\x0c和\cL
+
+
+
+`\n`匹配换行符，等效于\x0a和\cJ
+
+
+
+## UNION联合
+
+用于将多个select语句的结果组合成单个结果集，会去掉相同的行
+
+每个select语句返回的列数量和名称必须相同
+
+
+
+```hive
+select ...
+	union [all]
+select ...
+```
+
+all是不去重
+
+
+
+## Sampling数据抽样
+
+进行随机抽样，本质是用TABLESAMPLE函数
+
+### 基于随机分桶抽样
+
+`select ... from tb1 TABLESAMPLE(BUCKET x OUT OF y ON  列名/rand());`
+
+y表示将数据随机划分成y个桶
+
+x表示从y里面随机抽取x份数据作为取样
+
+列名表示随机地依据基于某个列的值，条件不变，结果不变
+
+rand()表示随机地依据基于整行，每次抽样结果都不同
+
+
+
+比如：
+
+```hive
+select username,orderID from tb1 TABLESAMPLE(bucket 1 out of 10 on username);
+
+select username,orderID from tb1 TABLESAMPLE(bucket 1 out of 10 on rand());
+```
+
+### 基于数据块抽样
+
+按顺序收取，无法随机，条件不变，结果不变
+
+`select ... from tb1 TABLESAMPLE(num rows/num percent/num(K/M/G));`
+
+num rows表示抽样num条数据
+
+num percent表示抽样num%的数据
+
+num(K/M/G)表示抽取numKB/MB/GB大小的数据
+
+ 
+
+比如：
+
+```hive
+select * from tb1 tablesample(100 rows);
+select * from tb1 tablesample(1 percent);
+select * from tb1 tablesample(10K);
+```
+
+
+
+## Virtual Columns虚拟列
+
+是Hive内置的可以在查询语句中使用的特殊标记，可以查询数据本身的详细参数
+
+
+
+`INPUT_FILE_NAME`显示数据行所在的具体文件
+
+`BLOCK_OFFSET_INSIDE_FILE`显示数据行所在文件的偏移量
+
+`ROW_OFFSET_INSIDE_BLOCK`显示数据所在HDFS块的偏移量，需要设置`SET hive.exec.rowoffset=true`
+
+
+
+比如：
+
+```hive
+select *,INPUT_FILE_NAME,BLOCK_OFFSET_INSIDE_FILE,ROW_OFFSET_INSIDE_BLOCK from tb1 where BLOCK_OFFSET_INSIDE_FILE < 1000;
+```
+
+
+
+## 函数
+
+### 内置函数
+
+`show function`查看所有可用函数
+
+`describe function extended 函数名`查看函数使用方法
+
+#### 数学函数：
+
+`round(double,int)`返回指定精度的double类型，四舍五入
+
+不写int表示返回到整数
+
+
+
+`rand(int)`随机数，里面是seed
+
+`abs(xxx)`返回xxx的绝对值
+
+`pi()`返回小数点后15位精度的pi值
+
+#### 集合函数
+
+`size()`返回元素个数
+
+`map_keys(map名)`
+
+`map_values(map名)`
+
+`array_contains(array名,value)`
+
+`sort_array(array名)`按升序排序
+
+#### 类型转换函数
+
+`binary(string/binary)`将给定字符串转换为二进制
+
+
+
+`cast(xxx as type)`将xxx转换为给定类型
+
+`cast(xxx as boolean)`对于非空字符串会返回True
+
+#### 日期函数
+
+`current_timestamp()`返回当前时间戳，同一个查询中对current_timestamp()的调用都返回相同的值
+
+`current_date`返回当前日期，同一个查询中对current_date的调用都返回相同的值
+
+`to_date(string timestamp)`时间戳转换日期
+
+
+
+`year(string date)`得到给定时间的年
+
+`quarter(string date/timestamp)`得到给定时间的季度
+
+..............
+
+
+
+`datediff(string enddate,string startdate)`返回enddate和startdate之间的天数
+
+`data_add(string date/timestamp/startdate,int xxx)`日期加xxx天
+
+..............
+
+#### 条件函数
+
+`if(条件语句,xxx,yyy)`若条件语句为true，返回xxx，否则返回yyy
+
+`isnull(a)`
+
+`isnotnull(a)`
+
+`nvl(xxx,yyy)`若xxx为null，返回yyy，否则返回xxx
+
+`COALESCE(xxx,yyy,...)`返回第一个不是null的值，若没有，则返回null
+
+`CASE a WHEN b THEN c [WHEN d THEN e ...] [ELSE f] END`当a=b/d/...时，返回c/e/...，都不是则返回f
+
+`CASE WHEN b THEN c [WHEN d THEN e ...] [ELSE f] END`当b=true，返回c；d=true，返回e...，都不是则返回f
+
+`nullif(a,b)`如果a=b，则返回null，否则返回a
+
+`assert_true(条件语句)`如果条件语句结果不为True，就报错
+
+#### 字符串函数
+
+`concat(string/binary a,string/binary b,...)`链接字符串
+
+`concat_ws(string/binary a,string/binary b,...)`同上，但能自己定义字符串之间的分隔符
+
+`length(string a)`
+
+`lower(string a)`全部转小写
+
+`upper(string a)`全部转大写
+
+`trim(string a)`返回从a两端裁剪空格得到的字符串
+
+`split(string a,string pat)`按照pat分隔字符串，pat是正则表达式
+
+#### 数据脱敏函数
+
+`mask_hash(string/char/varchar str)`对字符串进行hash加密，非字符串加密会得到null
+
+#### 其他函数
+
+`hash(xxx)`返回参数的hash数字
+
+`current_user()`返回当前登录用户
+
+`current_database()`返回当前选择的数据库
+
+`version()`返回当前hive版本
+
+`md5(string/binary)`返回给定参数的md5值
+
+### 用户定义函数UDF
 
