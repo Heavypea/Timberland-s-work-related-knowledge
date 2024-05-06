@@ -1756,4 +1756,132 @@ Xxxinput组件源码
 </script>
 ```
 
-## 
+## pinia
+
+## slot
+
+插槽
+
+### 默认插槽
+
+原本组件间夹的普通标签不会生效，使用插槽后能让它生效
+
+父组件
+
+```vue
+<template>
+	<div class="father">
+        <Category title="xxx">
+            <ul>
+                <li v-for="g in games" :key="g.id">{{g.name}}</li>
+    		</ul>
+    	</Category>
+    </div>
+</template>
+<script lang='ts' setup name = "Father">
+	import Category from './Category.vue'
+    import {ref,inject} from 'vue'
+    let games = reactive([{id:'01',name:'lol'},
+                        {id:'02',name:'cs'}
+                        ])
+</script>
+```
+
+子组件
+
+```vue
+<template>
+	<div class="category">
+        <h2>{{title}}</h2>
+        <slot>默认内容</slot>
+    </div>
+</template>
+<script lang='ts' setup name="Category">
+    defineProps(['title'])
+</script>
+```
+
+### 具名插槽
+
+v-slot:可以简写为#
+
+父组件
+
+```vue
+<template>
+	<div class="father">
+        <Category>
+            <template v-slot:s2>
+                <ul>
+                	<li v-for="g in games" :key="g.id">{{g.name}}</li>
+    			</ul>
+			</template>
+			<template v-slot:s1>
+				<h2>xxx</h2>
+			</template>
+    	</Category>
+    </div>
+</template>
+<script lang='ts' setup name = "Father">
+	import Category from './Category.vue'
+    import {ref,inject} from 'vue'
+    let games = reactive([{id:'01',name:'lol'},
+                        {id:'02',name:'cs'}
+                        ])
+</script>
+```
+
+子组件
+
+```vue
+<template>
+	<div class="category">
+        <slot name="s1">默认内容</slot>
+        <slot name="s2">默认内容</slot>
+    </div>
+</template>
+<script lang='ts' setup name="Category">
+</script>
+```
+
+### 作用域插槽
+
+父组件
+
+```vue
+<template>
+	<div class="father">
+        <Game>
+            <template v-slot="params">//a是个接收所有传入数据的对象
+                <ul>
+            		<li v-for="g in params.games",:key="g.id">{{g.name}}</li>
+    			</ul>
+			</template>
+    	</Game>
+    </div>
+</template>
+<script lang='ts' setup name = "Father">
+    import Game from './Game.vue'
+    import {ref,inject} from 'vue'
+    let games = reactive([{id:'01',name:'lol'},
+                        {id:'02',name:'cs'}
+                        ])
+</script>
+```
+
+子组件
+
+```vue
+<template>
+	<div class="game">
+        <slot :games="games"></slot>
+    </div>
+</template>
+<script lang='ts' setup name="Game">
+    import {ref,inject} from 'vue'
+    let games = reactive([{id:'01',name:'lol'},
+                        {id:'02',name:'cs'}
+                        ])
+</script>
+```
+
