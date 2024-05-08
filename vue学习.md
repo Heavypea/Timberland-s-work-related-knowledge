@@ -1885,3 +1885,146 @@ v-slot:可以简写为#
 </script>
 ```
 
+## 其他API
+
+### shallowRef和shallowReactive
+
+只对数据第一层次实现响应式。用于只关注整体修改
+
+比如shallowRef的person.value就是第一层
+
+person.value.name就是第二层
+
+
+
+也比如shallowReactive的car对像的普通属性/对象属性本身是第一层
+
+对象属性的内部属性就是第二层
+
+### readonly和shallowReadonly
+
+将响应式数据转换为不可改变的数据
+
+shallowReadonly只限制第一层
+
+### toRaw和markRaw
+
+toRaw将响应式数据转换为原始格式的数据
+
+markRaw将数据进行标记，让这个数据永远不能转换为响应式数据
+
+### customRef
+
+自定义Ref
+
+track为跟踪
+
+trigger为调用，通知vue跟踪的数据发生变化了
+
+```vue
+<template>
+	<div class="app">
+        <h2>{{msg}}</h2>
+        <input type="text" v-model="msg">
+    </div>
+</template>
+<script lang='ts' setup name="Game">
+    import {customRef} from 'vue'
+    let initValue ='你好'
+    let timer:number
+    let msg = customRef((track,trigger)=>{
+        return{
+            get(){//msg被读取时调用
+                track()
+                return initValue
+            },
+            set(value){//msg被修改时调用，value是最新值
+                clearTimeout(timer)
+                timer = setTimeout(()=>{
+                    initValue = value
+                	trigger()
+                },1000)//一秒钟才会更新
+            }
+        }
+    })
+</script>
+```
+
+通常写成hooks进行使用
+
+## Teleport
+
+父组件
+
+```vue
+<template>
+	<div class="outer">
+        <img src="xxx" alt=''>
+        <br>
+        <Modal/>
+    </div>
+</template>
+<script lang='ts' setup name = "Outer">
+	import Modal from "./Modal.vue";
+    
+</script>
+```
+
+子组件
+
+```vue
+<template>
+	<button @click="isShow = true">
+	<teleport to='body'>
+        <div class="modal" v-show="isShow">
+        	<h2>我是标题</h2>
+       		<button @click="isShow = false">关闭弹窗</button>
+    	</div>
+    </teleport>
+    </button>
+</template>
+<script lang='ts' setup name="Modal">
+	import {Ref} from 'vue'
+    let isShow =ref(false)
+</script>
+```
+
+用于将子组件的模板部分“传送”到 DOM 的其他部分，而不是局限于父组件的 DOM 结构中。
+
+同时不影响逻辑
+
+## Suspense
+
+```vue
+<template>
+  <Suspense>
+    <template #default>
+      <AsyncComponent />
+    </template>
+    <template #fallback>
+      <div>Loading...</div>
+    </template>
+  </Suspense>
+</template>
+
+<script>
+import { defineAsyncComponent } from 'vue';
+
+export default {
+  components: {
+    AsyncComponent: defineAsyncComponent(() =>
+      import('./components/AsyncComponent.vue')
+    )
+  }
+}
+</script>
+```
+
+在这个例子中，`AsyncComponent` 是一个通过 `defineAsyncComponent` 方法定义的异步组件。当组件正在加载时，用户会看到一个简单的 "Loading..." 消息。一旦组件加载完成并准备渲染，`Suspense` 将自动显示 `AsyncComponent`。
+
+
+
+主要与异步组件一起使用，它可以包裹一个或多个异步组件，并管理这些组件的加载状态。`Suspense` 组件有两个主要的插槽（slot）：
+
+- `default` 插槽：包含异步组件。
+- `fallback` 插槽：在异步组件加载时显示的内容，通常是加载指示器或者其他加载状态 UI。
